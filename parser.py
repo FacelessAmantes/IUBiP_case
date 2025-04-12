@@ -24,7 +24,7 @@ import requests
 
 url = 'http://localhost:8000/users/registration'
 
-data = {'login':'3231', 'email':'33212', 'password':'321231'}
+data = {'login':'Kisnge2r', 'email':'email322@gmail.com', 'password':'321231e323212'}
 response = requests.request('POST', url=url, json =data)
 
 print(response.content)

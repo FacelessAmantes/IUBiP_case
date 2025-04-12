@@ -8,16 +8,16 @@ router = APIRouter(prefix='/users')
 
 
 @router.post('/registration')
-def reg_user(user:UserCreate, db: Session = Depends(get_db)):
+def reg_user(payload:UserCreate, db: Session = Depends(get_db)):
     try:
-        db_user = User(login=user.login, email=user.email, password=user.password)
+        db_user = User(login=payload.login, email=payload.email, password=payload.password)
         db.add(db_user)
         db.commit()
         db.refresh(db_user)
-        return JSONResponse()
+        return {"status":'succesed'}
     except IntegrityError as e:
         db.rollback()  # Откат транзакции в случае ошибки
-        raise HTTPException(status_code=400, detail="User  with this login or email already exists.")
+        raise HTTPException(status_code=400, detail=e)
     except Exception as e:
         db.rollback()
         raise HTTPException(status_code=500, detail=str(e))
