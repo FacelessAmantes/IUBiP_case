@@ -1,11 +1,13 @@
 from fastapi import APIRouter
+from users.models import User
 
 
 router = APIRouter(prefix='/users')
 
 
 @router.post('/registration')
-def reg_user(email:str, login: str, password:str):
+def reg_user(user:User):
+    # тут логика добавления логики
     status = True
     element_id = 0
     if status:
@@ -15,3 +17,7 @@ def reg_user(email:str, login: str, password:str):
 
     return response
 
+@router.delete('/delete')
+def delete_user(login:str):
+    pass
+# Тут логика удаления юзера

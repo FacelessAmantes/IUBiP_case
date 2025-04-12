@@ -1,20 +1,11 @@
 import asyncio
-import nodriver as uc
 import time 
 from datetime import date
 
-async def main():
-    url = 'https://www.ozon.ru/product/holodilnik-s-nizhney-morozilnoy-kameroy-hyundai-cc30031-obem-296l-klass-a-uroven-shuma-40-db-1771312553/?campaignId=535'
-    browser = await uc.start()
-    page = await browser.get(url=url)
 
 
-    time.sleep(4)
+        
 
-    sales_element = await page.query_selector('[data-widget="webPrice"]')
-
-    print(type(sales_element))
-    time.sleep(100)
 
 
 
@@ -22,10 +13,29 @@ async def main():
 
 import requests
 
-url = 'http://localhost:8000/markets_prices/history'
 
-data = {'ids':[213, 12, 232, 121], 'date_from': '2024.02.01', 'date_to': '2024.02.01'}
+urls = {'urls': ['https://market.yandex.ru/product--maska-sfericheskaia-polnolitsevaia-6800-panoramnaia-s-filtrami/1909972184?sku=102203133644&uniqueId=12707986&do-waremd5=AQWmagIiuUGWV4CFjuBXwg&sponsored=1&cpc=yT4SBUOzqcmPpY9DZIJTj93tgS_GXjYeQy6V4vuCJNOiZXpJa7LbfZh-VXYc2aqK10y0Ps0stt-VzOPIj3fz-J_UdPYbEZ9F98yRCy04JY-R1BiCOmBonuJuR8G8r5cQqAzVBoTBilJK27UaSyLlZs3cbqkGV4FziNb46Jzq9VM4ql6Mvxt0OWOoL_Bj7z2Ky2EHB9Sl_S5AzqJ-knbWF0rw8YvoIvue79FIwzgzSiS3pC3BmIE3dTulZA4NIEtse_Yt3IiW_UpYXTNrkxmUNDxgzak3cI31wDVA25EHk_0npcR6UwnGjKFoEH_FGQhWAhM4L8qmiYLsa80qUcSPDQwcp7KkZ3CGURx8BJz4_3-_SK2WHWPIxMWnSXdBwBJX9SQiPbtoETdqDYCFfCOyXTuexN9TOjjWZmS-0Tcp4w3bVc8gKZxUoQFnroKQ-EA_TVM25dNrk9wef3oCjSSyACj-zFHqRCkl94J3jMnF0g1WJjohOn7J6Jz3vpDZPup_5ZWce_ZFdC4%2C']}
 
-response = requests.request('GET',url=url, json=data)
+
+url = 'http://localhost:8000/markets_prices/get_prices_v2'
+
+
+response = requests.request('POST',url=url, json =urls)
 
 print(response.json())
+
+# import sqlalchemy
+# from sqlalchemy.orm import sessionmaker, Session
+
+# db_params = {"host":"64.188.97.135", 'user':"bober", 'password':'0000', 'table':'users'}
+
+
+# DATABASE_URL = f"postgresql://{db_params.get('user')}:{db_params.get('password')}@{db_params.get('host')}/{db_params.get('table')}"  # Замените на вашу строку подключения
+# engine = sqlalchemy.create_engine(DATABASE_URL)
+# SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
+
+# db = SessionLocal()
+
+# print(db.query().all())
+
