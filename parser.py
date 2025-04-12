@@ -16,12 +16,18 @@ import requests
 
 
 
-url = 'http://localhost:8000/markets_prices/history'
+# url = 'http://localhost:8000/markets_prices/history'
 
-data = {'ids':[322, 3212, 2311], 'date_from':'24-06-2006', 'date_to': '25-06-2006'}
-response = requests.request('GET',url=url, json =data)
+# data = {'ids':[322, 3212, 2311], 'date_from':'24-06-2006', 'date_to': '25-06-2006'}
+# response = requests.request('GET',url=url, json =data)
 
-print(response)
+
+url = 'http://localhost:8000/users/registration'
+
+data = {'login':'3231', 'email':'33212', 'password':'321231'}
+response = requests.request('POST', url=url, json =data)
+
+print(response.content)
 
 # import sqlalchemy
 # from sqlalchemy.orm import sessionmaker, Session

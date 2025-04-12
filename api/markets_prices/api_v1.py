@@ -5,7 +5,7 @@ import re
 from sqlalchemy.orm import Session
 from db.db import get_db 
 from sqlalchemy import text
-
+from datetime import datetime
 
 price_router = APIRouter(prefix='/markets_prices')
 
@@ -58,8 +58,8 @@ async def post_price(payload:PricesRequest):
     
 @price_router.get('/history', response_model=HistoryResponse)
 def get_history(payload:HistoryRequest, db: Session = Depends(get_db)):
-    date_from = payload.date_from
-    date_to = payload.date_to
+    date_from = datetime.strptime(payload.date_from, "%d-%m-%Y")  # Преобразуем строку в объект datetime
+    date_to = datetime.strptime(payload.date_to, "%d-%m-%Y")  # Преобразуем строку в объект datetime
     ids = payload.ids
     # Формирование SQL-запроса
     query = text(
