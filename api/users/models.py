@@ -2,15 +2,15 @@ from pydantic import BaseModel, EmailStr, constr
 from pydantic.types import SecretStr, StringConstraints 
 from sqlalchemy import Column, Integer, String
 from db.db import Base
-
+import 
 
 class User(Base):
 
     __tablename__ = 'users'
 
-    login = Column(String)
-    email = Column(String, primary_key= True, unique=True)
-    password = Column(String)
+    login = Column(String, nullable=False)  # Уникальный логин
+    email = Column(String, unique=True, nullable=False, primary_key=True)  # Уникальный email
+    password = Column(String, nullable=False)  # Пароль
 
 
 

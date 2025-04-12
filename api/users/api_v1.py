@@ -10,17 +10,20 @@ router = APIRouter(prefix='/users')
 @router.post('/registration')
 def reg_user(payload:UserCreate, db: Session = Depends(get_db)):
     try:
+        # Создание нового пользователя
         db_user = User(login=payload.login, email=payload.email, password=payload.password)
         db.add(db_user)
         db.commit()
-        db.refresh(db_user)
-        return {"status":'succesed'}
+        db.refresh(db_user)  # Обновление объекта db_user с данными из базы данных
+
+        return {"status": "success", "user_id": db_user.id}  # Возвращаем ID нового пользователя
     except IntegrityError as e:
         db.rollback()  # Откат транзакции в случае ошибки
-        raise HTTPException(status_code=400, detail=e)
+        return {'error':e}
+        raise HTTPException(status_code=400, detail="User  with this login or email already exists.")
     except Exception as e:
         db.rollback()
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail="An unexpected error occurred: " + str(e))
 
 @router.delete('/delete')
 def delete_user(login:str):

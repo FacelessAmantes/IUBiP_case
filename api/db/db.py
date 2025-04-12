@@ -1,9 +1,10 @@
 from sqlalchemy import create_engine, Column, Integer, String
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, Session
+import os
 
 # Настройка базы данных
-DATABASE_URL = "postgresql://postgres:0000@64.188.97.135:5432/iubip_case"
+DATABASE_URL = os.getenv('DATABASE_URL')
 
 # Создание движка
 engine = create_engine(DATABASE_URL)
