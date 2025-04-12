@@ -1,7 +1,11 @@
-from fastapi import APIRouter
-from markets_prices.models import HistoryRequest, HistoryResponse, PricesRequest
+from fastapi import APIRouter, Depends
+from markets_prices.models import HistoryRequest, HistoryResponse, PricesRequest, ContentItemResponse
 from utils.Parser import Parser
 import re
+from sqlalchemy.orm import Session
+from db.db import get_db 
+from sqlalchemy import text
+
 
 price_router = APIRouter(prefix='/markets_prices')
 
@@ -53,15 +57,34 @@ async def post_price(payload:PricesRequest):
 
     
 @price_router.get('/history', response_model=HistoryResponse)
-def get_history(payload:HistoryRequest):
-    # Тут запрос к бд на получении данных по фильру
+def get_history(payload:HistoryRequest, db: Session = Depends(get_db)):
     date_from = payload.date_from
     date_to = payload.date_to
     ids = payload.ids
-    query = "SELECT *" \
-    "FROM {table}" \
-    "WHERE id in {ids}" \
-    "and date >= {date_from}" \
-    "and date <= {date_to}" \
+    # Формирование SQL-запроса
+    query = text(
+        "SELECT * FROM items_history "
+        "WHERE product IN :ids "
+        "AND date >= :date_from "
+        "AND date <= :date_to"
+    )
 
-    return HistoryResponse(status='succesed', content=[])
+    # Выполнение запроса
+    result = db.execute(query, {
+        "ids": tuple(ids) if isinstance(ids, list) else (ids,),
+        "date_from": date_from,
+        "date_to": date_to
+    }).fetchall()
+
+    # Преобразование результата в список Pydantic моделей
+    content = [
+        ContentItemResponse(
+            product=row.product,
+            date=row.date,
+            first_price=row.first_price,
+            second_price=row.second_price
+        )
+        for row in result
+    ]
+
+    return HistoryResponse(status='success', content=content)
