@@ -64,10 +64,9 @@ def parse(url,html):
                 raw_price = normalize_price_text(match[0].replace(',', '.'))
                 if raw_price.replace('.', '', 1).isdigit():
                     price = float(raw_price)
-                    if price >= 1000:  # Убираем цены ниже 1000
-                        prices.append(price)
-
-        return prices
+                    prices.append(price)
+            if price >= 500:
+                return prices
 
 
     def create_json(prices, url):
@@ -80,17 +79,11 @@ def parse(url,html):
 
         # Формируем JSON для конкретной ссылки
         result = {
-            "status": True,
-            "content": [
-                {
                     "url": url,
                     "floorPrice": floor_price,
                     "maxPrice": max_price,
                     "timestamp": timestamp  # Используем метку времени SQL
                 }
-            ],
-            "totalItems": 1  # Каждая ссылка рассматривается отдельно
-        }
 
         return result
 
@@ -114,14 +107,8 @@ def parse(url,html):
         result = create_json(prices, item['url'])
         all_results.append(result)
 
-    # Формируем итоговый JSON для всех ссылок
-    final_results = {
-        "status": True,
-        "content": [result["content"][0] for result in all_results],  # Берем только контент из каждого результата
-        "totalItems": len(all_results)
-    }
-
-    return final_results
+    
+    return prices
     # Сохраняем в JSON файл
     with open("result_prices.json", "w", encoding="utf-8") as f:
         json.dump(final_results, f, ensure_ascii=False, indent=2)
