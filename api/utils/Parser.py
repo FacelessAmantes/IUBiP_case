@@ -6,7 +6,7 @@ class Parser:
         self.driver = None 
 
     async def open(self):
-        self.driver = await uc.start()
+        self.driver = await uc.start(no_sandbox=True)
 
     async def get_page_content(self, url):
         if self.driver:

@@ -53,7 +53,3 @@ def get_products(email:str, db:Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="No products found for the provided URLs")
 
     return result
-    
-
-def update_url_price(db:Session = Depends(get_db)):
-    result = db.query(UserLinks).filter(UserLinks.email ==email).all()
