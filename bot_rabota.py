@@ -29,25 +29,27 @@ dp = Dispatcher()
 async def notify_users_with_updated_links():
     conn = await asyncpg.connect(DB_DSN)
 
-    # Берём последние 24 часа обновлений
-    check_time = datetime.now() - timedelta(hours=24)
+    # Временная граница — последние 24 часа
+    check_time = datetime.utcnow() - timedelta(hours=24)
 
-    # Все email, у кого были обновления ссылок
+    # Получаем пары email и tg_id, где есть обновления по ссылкам
     rows = await conn.fetch("""
-        SELECT DISTINCT ul.email, u.tg_id
+        SELECT u.tg_id, ul.email, MAX(ul.timestamp) as last_update
         FROM user_links ul
         JOIN users u ON ul.email = u.email
         WHERE ul.timestamp > $1
+        GROUP BY u.tg_id, ul.email
     """, check_time)
 
     for row in rows:
         tg_id = row["tg_id"]
         email = row["email"]
+        last_update = row["last_update"].strftime('%Y-%m-%d %H:%M:%S')
 
         try:
             await bot.send_message(
                 chat_id=tg_id,
-                text="🔔 Обновилась информация по вашим отслеживаемым ссылкам!"
+                text=f"🔔 Обновления по вашим ссылкам с {last_update}!\n(Email: {email})"
             )
             logging.info(f"Уведомление отправлено пользователю {tg_id} ({email})")
         except Exception as e:
